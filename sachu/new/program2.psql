@@ -1,0 +1,110 @@
+CREATE TABLE cust(cust_num int primary key, cust_name varchar(20), address varchar(30), pincode int);
+
+
+\d cust;
+
+insert into cust values(10, 'ram', 'thoppumpady', 680031);
+insert into cust values(11, 'amal', 'irinjalakuda', 689065);
+insert into cust values(12, 'fahad', 'vadanappaly', 680121);
+insert into cust values(13, 'joseph', 'kannur', 680054);
+insert into cust values(14, 'simran', 'trivandrum', 684554);
+
+
+select * from cust;
+
+
+
+CREATE TABLE order_master(order_num int primary key, order_date date not null, cust_num int references cust(cust_num), order_amount int not null);
+
+
+\d order_master;
+
+
+
+insert into order_master values(101, '12-10-2019', 10, 6500);
+insert into order_master values(102, '1-11-2020', 11, 7900);
+insert into order_master values(103, '12-02-2020', 12, 8500);
+insert into order_master values(104, '12-03-2020', 13, 5000);
+insert into order_master values(105, '12-05-2020', 14, 4500);
+
+
+select * from order_master;
+
+
+
+CREATE TABLE item(item_num int primary key, unit_price int not null);
+
+\d item;
+
+insert into item values(1001, 65);
+insert into item values(1002, 45);
+insert into item values(1003, 56);
+insert into item values(1004, 35);
+insert into item values(1005, 80);
+insert into item values(1006, 90);
+insert into item values(1007, 20);
+
+
+select * from item;
+
+
+
+
+CREATE TABLE order_details(line_num int primary key, order_num int references order_master(order_num), item_num int not null references item(item_num), quantity int not null);
+
+
+\d order_details;
+
+
+insert into order_details values(11, 101, 1001, 5);
+insert into order_details values(12, 102, 1002, 8);
+insert into order_details values(13, 103, 1003, 15);
+insert into order_details values(14, 104, 1004, 13);
+insert into order_details values(10, 101, 1001, 5);
+
+select * from order_details;
+
+
+
+CREATE TABLE ware_house(ware_house_no int primary key, city varchar(20) not null);
+
+\d ware_house;
+
+
+insert into ware_house values(21, 'ERNAKULAM');
+insert into ware_house values(22, 'THRISSUR');
+insert into ware_house values(23, 'DELHI');
+insert into ware_house values(24, 'KOLKATA');
+insert into ware_house values(25, 'MUMBAI');
+
+select * from ware_house;
+
+
+
+CREATE TABLE shipment(order_num int primary key, ware_house_no int references ware_house(ware_house_no), ship_date date not null);
+
+
+\d shipment;
+
+
+insert into shipment values(101, 21, '2019-12-15');
+insert into shipment values(102, 22, '2020-11-06');
+insert into shipment values(103, 23, '2020-03-01');
+insert into shipment values(104, 24, '2020-04-08');
+insert into shipment values(105, 25, '2020-05-25');
+
+
+select * from shipment;
+
+
+
+select cust_name, count(order_master.order_num), avg(order_master.order_amount) from cust, order_master where cust.cust_num = order_master.cust_num group by cust_name;
+
+
+select shipment.order_num, ware_house.ware_house_no from shipment, ware_house where shipment.ware_house_no = ware_house.ware_house_no and ware_house.city = 'ERNAKULAM';
+
+
+delete from item where item_num not in (select item_num from order_details);
+
+
+select * from item;

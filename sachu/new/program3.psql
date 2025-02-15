@@ -1,0 +1,111 @@
+create table Employee2(first_name varchar(20) not null, middle_initial varchar(20), last_name varchar(20) not null, emp_id int primary key, date_of_birth date not null, address varchar(35), gender varchar(20), salary int, date_of_joining date, constraint ch_sal check(salary between 5000 and 25000));
+
+\d Employee2;
+
+insert into Employee2 values('julie', '', 'tan', 6544, '2001-04-13', 'ijk', 'f', 20100, '2018-01-13');
+insert into Employee2 values('giya', '', 'ravi', 1085, '2001-05-13', 'kochi', 'f', 20000, '2016-04-23');
+insert into Employee2 values('mary', '', 'paul', 1028, '2001-05-10', 'thrissur', 'f', 22000, '2017-06-23');
+insert into Employee2 values('david', '', 'ravi', 1034, '2000-01-10', 'kottayam', 'f', 20000, '2016-01-23');
+insert into Employee2 values('felix', '', 'parin', 1000, '1993-01-10', 'pala', 'm', 20000, '2014-01-23');
+insert into Employee2 values('martin', '', 'paxton', 1001, '1999-01-10', 'pala', 'm', 20000, '2012-01-23');
+
+
+select * from Employee2;
+
+create table dept(dept_no int primary key, dept_name varchar(20) not null unique, manager_id int references Employee2(emp_id), manager varchar(20), date_of_joining date not null);
+
+\d dept;
+
+
+insert into dept values(101, 'accounts', 6544, 'julie', '2018-01-13');
+insert into dept values(102, 'hr', 1085, 'giya', '2016-04-23');
+insert into dept values(103, 'sales', 1028, 'mary', '2017-06-23');
+insert into dept values(104, 'prduction', 1034, 'david', '2016-01-23');
+insert into dept values(105, 'manager', 1000, 'felix', '2014-01-23');
+insert into dept values(106, 'project', 1001, 'martin', '2012-01-23');
+
+select * from dept;
+
+create table department_location(dept_no int references dept(dept_no), dept_location varchar(30) not null);
+
+\d department_location;
+
+insert into department_location values(101, 'kochi');
+insert into department_location values(102, 'ijk');
+insert into department_location values(103, 'main_building');
+insert into department_location values(104, 'thrissur');
+insert into department_location values(105, 'thrissur');
+insert into department_location values(106, 'kochi');
+
+select * from department_location;
+
+create table project(project_name varchar(30) not null, project_no int primary key, project_location varchar(25) not null, dept_no int references dept(dept_no));
+
+\d project;
+
+insert into project values('birla_grp', 111, 'kochi', 101);
+insert into project values('giya_team', 112, 'ijk', 102);
+insert into project values('kottyam_info', 113, 'main_building', 103);
+insert into project values('tata_and_sons', 114, 'thrissur', 104);
+insert into project values('tata_and_sons', 115, 'thrissur', 105);
+insert into project values('kochi_info', 116, 'kochi', 106);
+
+select * from project;
+
+create table works_on(emp_id int references Employee2(emp_id), project_no int not null references project(project_no), hours time not null);
+
+\d works_on;
+
+insert into works_on values(6544, 111, '01:01:01');
+insert into works_on values(1085, 112, '01:01:01');
+insert into works_on values(1028, 113, '02:01:01');
+insert into works_on values(1034, 114, '03:01:01');
+insert into works_on values(1000, 115, '04:01:01');
+insert into works_on values(1001, 116, '07:01:01');
+
+select * from works_on;
+
+create table dependent(emp_id int references Employee2(emp_id), dependent_name varchar(35), gender varchar(5), date_of_birth date not null, relationship varchar(20) not null);
+
+\d dependent;
+
+insert into dependent values(6544, 'rani', 'f', '1956-02-02', 'friend');
+insert into dependent values(1085, 'janu', 'f', '1956-06-02', 'friend');
+insert into dependent values(1028, 'jav', 'm', '1956-06-02', 'friend');
+insert into dependent values(1034, 'mahi', 'm', '1956-08-02', 'friend');
+insert into dependent values(1000, 'eva', 'f', '1956-08-02', 'friend');
+insert into dependent values(1001, 'eva', 'f', '1956-08-02', 'friend');
+
+select * from dependent;
+
+
+
+
+select * from Employee2 where emp_id in(select manager_id from dept where dept_name='accounts');
+
+select * from Employee2 where emp_id in(select manager_id from dept where dept_name='hr');
+
+select * from Employee2 where emp_id in(select manager_id from dept where dept_name='sales');
+
+select * from Employee2 where emp_id in(select manager_id from dept where dept_name='project');
+
+select * from Employee2 where emp_id in(select manager_id from dept where dept_name='manager');
+
+select * from Employee2 where emp_id in(select manager_id from dept where dept_name='prduction');
+
+
+
+
+select project_name from project;
+
+select * from Employee2 where emp_id = (select emp_id from works_on where emp_id = '1000');
+
+select * from dependent where emp_id = '1001';
+
+
+-- drop table dependent;
+-- drop table works_on;
+-- drop table project;
+-- drop table department_location;
+-- drop table dept;
+-- drop table Employee2;

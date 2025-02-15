@@ -1,0 +1,44 @@
+create table customer(cust_id varchar(10) primary key, cust_name varchar(25), area varchar(3), phone int);
+
+\d customer;
+
+insert into customer values('A001', 'Abhi', 'abc', 1122335);
+insert into customer values('A002', 'Abhijith', 'bdf', 1234567);
+insert into customer values('A003', 'helen', 'bff', 1256567);
+insert into customer values('A004', 'elen', 'abc', 1456567);
+insert into customer values('A005', 'leon', 'acm', 7456567);
+insert into customer values('A006', 'leo', '', 8456567);
+
+select * from customer;
+
+
+alter table customer alter column phone type varchar(20);
+
+update customer set phone = concat('91', phone) where area = 'abc';
+
+update customer set phone = concat('92', phone) where area = 'bdf';
+
+update customer set phone = concat('90', phone) where area = 'bff';
+
+update customer set phone = concat('93', phone) where area = 'acm';
+
+select * from customer;
+
+
+select * from customer where cust_name like '_e%';
+
+select * from customer where area = 'abc';
+
+delete from customer where area = '';
+
+select * from customer order by cust_name asc;
+
+create table temp as select cust_id, cust_name, area from customer;
+
+select * from temp;
+
+select area, count(*) as record_count from customer group by area;
+
+select * from customer where cust_name like 'A%' or area = 'abc';
+
+select * from customer where cust_name like 'a%' and phone = '55';
